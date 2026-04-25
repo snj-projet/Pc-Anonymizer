@@ -14,7 +14,6 @@ from datetime import datetime
 import threading
 import time
 
-# Configuration globale de customtkinter
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
@@ -67,20 +66,16 @@ class JustDownApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         
-        # État de l'application
         self.is_vpn_connected = False
         self.public_ip = "Chargement..."
         self.current_tab_id = "DASHBOARD"
         
-        # Configuration principale de la fenêtre
         self.title("JustDown - Privacy & Security Suite")
         self.geometry("1000x700")
         self.minsize(800, 600)
 
-        # Chargement des icônes
         self.load_icons()
 
-        # Couleurs et thème
         self.primary_color = "#ca35cd"
         self.secondary_color = "#2D2D44"
         self.accent_color = "#6C72CB"
@@ -89,23 +84,18 @@ class JustDownApp(ctk.CTk):
         self.text_color = "#FFFFFF"
         self.text_color_secondary = "#6C7293"
 
-        # Création de l'interface utilisateur dans le panneau principal
         self.main_frame = ctk.CTkFrame(self, corner_radius=20, fg_color=self.card_color)
         self.main_frame.grid(row=1, column=1, sticky="nsew", padx=15, pady=15)
         
-        # Barre de statut
         self.status_bar = ModernProgressBar(self, fg_color="transparent")
         self.status_bar.grid(row=2, column=0, columnspan=2, sticky="ew", padx=15, pady=(0, 5))
         
-        # Configuration du redimensionnement
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(1, weight=1)
         
-        # Création de la barre latérale et de la barre supérieure
         self.create_sidebar()
         self.create_topbar()
 
-        # Liste des emplacements VPN (Simplifiée)
         self.vpn_locations_list = [
             "Paris, France", "Marseille, France", "London, UK", "Berlin, Germany", 
             "Frankfurt, Germany", "Amsterdam, Netherlands", "Madrid, Spain",
@@ -114,7 +104,6 @@ class JustDownApp(ctk.CTk):
         ]
         self.selected_location = ctk.StringVar(value="Paris, France")
 
-        # Liste des thèmes de couleur
         self.themes = {
             "Violet Élégant": {
                 "primary": "#ca35cd",
@@ -165,10 +154,8 @@ class JustDownApp(ctk.CTk):
         self.selected_theme_name = "Violet Élégant"
         self.apply_theme(self.selected_theme_name)
         
-        # Lancer la récupération de l'IP
         self.fetch_ip_thread()
         
-        # Créer l'onglet Dashboard par défaut
         self.switch_tab("DASHBOARD", self.create_dashboard_tab)
 
     def fetch_ip_thread(self):
@@ -180,7 +167,6 @@ class JustDownApp(ctk.CTk):
             except:
                 self.public_ip = "Indisponible"
             
-            # Mettre à jour l'UI si nécessaire
             if hasattr(self, 'current_tab_id') and (self.current_tab_id == "DASHBOARD" or self.current_tab_id == "VPN"):
                 self.after(0, self.current_tab)
 
@@ -197,18 +183,15 @@ class JustDownApp(ctk.CTk):
         self.text_color = theme["text"]
         self.text_color_secondary = theme["text_secondary"]
         
-        # Mettre à jour les couleurs de fond de l'application
         self.configure(fg_color=self.bg_color)
         if hasattr(self, 'main_frame'):
             self.main_frame.configure(fg_color=self.card_color)
         if hasattr(self, 'sidebar_frame'):
             self.sidebar_frame.configure(fg_color=self.card_color)
             
-        # Recharger l'onglet actuel pour appliquer les couleurs
         if hasattr(self, 'current_tab'):
             self.current_tab()
 
-        # Mettre à jour les indicateurs de la barre latérale
         if hasattr(self, 'sidebar_nav_buttons'):
             for btn in self.sidebar_nav_buttons.values():
                 btn._hover_color = self.secondary_color
@@ -219,15 +202,12 @@ class JustDownApp(ctk.CTk):
                     btn.configure(fg_color="transparent")
 
     def load_icons(self):
-        # Créer un dictionnaire pour stocker les icônes
         self.icons = {}
         icons_dir = os.path.join(os.path.dirname(__file__), "icons")
         
-        # Si le dossier d'icônes n'existe pas, le créer
         if not os.path.exists(icons_dir):
             os.makedirs(icons_dir)
             
-        # Liste des icônes à créer (vous pouvez en ajouter d'autres)
         icon_data = {
             "vpn": "🔒",
             "clean": "🧹",
@@ -245,27 +225,22 @@ class JustDownApp(ctk.CTk):
             "vm": "🖥️"
         }
         
-        # Créer des images pour chaque icône
         for name, emoji in icon_data.items():
             self.icons[name] = emoji
 
     def create_topbar(self):
-        # Barre supérieure plus légère
         topbar = ctk.CTkFrame(self, height=50, fg_color="transparent")
         topbar.grid(row=0, column=0, columnspan=2, sticky="ew", padx=30, pady=(20, 0))
         
-        # Titre dynamique de la page
         self.page_title_label = ctk.CTkLabel(topbar,
                                            text="Tableau de bord",
                                            font=("Helvetica Neue", 20, "bold"),
                                            text_color=self.text_color)
         self.page_title_label.pack(side="left")
         
-        # Boutons de droite
         right_buttons = ctk.CTkFrame(topbar, fg_color="transparent")
         right_buttons.pack(side="right")
         
-        # Horloge
         self.clock_label = ctk.CTkLabel(right_buttons,
                                       text="",
                                       font=("Helvetica Neue", 13),
@@ -286,18 +261,15 @@ class JustDownApp(ctk.CTk):
         settings_btn.pack(side="left", padx=5)
 
     def update_clock(self):
-        # Mettre à jour l'horloge avec les secondes
         current_time = time.strftime("%H:%M:%S")
         if hasattr(self, 'clock_label'):
             self.clock_label.configure(text=f"{self.icons['clock']} {current_time}")
         self.after(1000, self.update_clock)
 
     def create_sidebar(self):
-        # Création de la barre latérale
         self.sidebar_frame = ctk.CTkFrame(self, corner_radius=20, fg_color=self.card_color)
         self.sidebar_frame.grid(row=1, column=0, sticky="nsew", padx=(15, 0), pady=15)
         
-        # Logo et titre
         title_frame = ctk.CTkFrame(self.sidebar_frame, fg_color="transparent")
         title_frame.pack(fill="x", padx=20, pady=20)
         
@@ -308,10 +280,8 @@ class JustDownApp(ctk.CTk):
         
         self.sidebar_nav_buttons = {}
 
-        # Section Dashboard
         self.add_sidebar_button("DASHBOARD", f"{self.icons['system']}  Tableau de bord", self.create_dashboard_tab, "MAIN")
         
-        # Section Sécurité
         ctk.CTkLabel(self.sidebar_frame,
                     text="SÉCURITÉ",
                     font=("Helvetica Neue", 11, "bold"),
@@ -321,7 +291,6 @@ class JustDownApp(ctk.CTk):
         self.add_sidebar_button("DNS", f"{self.icons['dns']}  DNS Protection", self.create_dns_tab)
         self.add_sidebar_button("ENCRYPTION", f"{self.icons['encryption']}  Chiffrement", self.create_encryption_tab)
         
-        # Section Nettoyage
         ctk.CTkLabel(self.sidebar_frame,
                     text="NETTOYAGE",
                     font=("Helvetica Neue", 11, "bold"),
@@ -331,7 +300,6 @@ class JustDownApp(ctk.CTk):
         self.add_sidebar_button("PRIVACY", f"{self.icons['privacy']}  Confidentialité", self.create_privacy_tab)
         self.add_sidebar_button("SECURE_DELETE", f"{self.icons['delete']}  Suppression", self.create_secure_delete_tab)
         
-        # Section Système
         ctk.CTkLabel(self.sidebar_frame,
                     text="SYSTÈME",
                     font=("Helvetica Neue", 11, "bold"),
@@ -356,7 +324,6 @@ class JustDownApp(ctk.CTk):
         self.sidebar_nav_buttons[id] = btn
 
     def switch_tab(self, tab_id, command):
-        # Mettre à jour le titre de la page
         titles = {
             "DASHBOARD": "Tableau de bord",
             "VPN": "Protection VPN",
@@ -371,18 +338,14 @@ class JustDownApp(ctk.CTk):
         if hasattr(self, 'page_title_label'):
             self.page_title_label.configure(text=titles.get(tab_id, "JustDown"))
 
-        # Désactiver tous les boutons
         for btn in self.sidebar_nav_buttons.values():
             btn.set_active(False)
         
-        # Activer le bouton cliqué
         self.sidebar_nav_buttons[tab_id].set_active(True)
         
-        # Mémoriser l'onglet actuel
         self.current_tab = command
         self.current_tab_id = tab_id
         
-        # Exécuter la commande
         command()
 
     def create_card(self, parent, title, content="", command=None):
@@ -433,7 +396,6 @@ class JustDownApp(ctk.CTk):
         self.clear_main_frame()
         self.current_tab_id = "DASHBOARD"
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=30, pady=(30, 20))
         
@@ -448,7 +410,6 @@ class JustDownApp(ctk.CTk):
                     font=("Helvetica Neue", 28, "bold"),
                     text_color=self.text_color).pack(anchor="w")
 
-        # Grille de statistiques rapides
         stats_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         stats_frame.pack(fill="x", padx=30, pady=10)
         stats_frame.grid_columnconfigure((0, 1, 2), weight=1)
@@ -460,13 +421,11 @@ class JustDownApp(ctk.CTk):
         self.create_stat_card(stats_frame, f"{self.icons['network']} IP Publique", self.public_ip, self.accent_color).grid(row=0, column=1, padx=10, sticky="ew")
         self.create_stat_card(stats_frame, f"{self.icons['security']} Sécurité", "Protégé", self.primary_color).grid(row=0, column=2, padx=(10, 0), sticky="ew")
 
-        # Section principale avec deux colonnes
         content_grid = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         content_grid.pack(fill="both", expand=True, padx=30, pady=20)
         content_grid.grid_columnconfigure(0, weight=2)
         content_grid.grid_columnconfigure(1, weight=1)
 
-        # Colonne de gauche - Activités récentes
         left_col = ctk.CTkFrame(content_grid, fg_color="transparent")
         left_col.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
 
@@ -488,14 +447,12 @@ class JustDownApp(ctk.CTk):
             ctk.CTkLabel(item, text=desc, font=("Helvetica Neue", 13), text_color=self.text_color_secondary).pack(side="left", padx=15)
             ctk.CTkLabel(item, text=time_text, font=("Helvetica Neue", 11), text_color=self.text_color_secondary).pack(side="right")
 
-        # Colonne de droite - État du système
         right_col = ctk.CTkFrame(content_grid, fg_color="transparent")
         right_col.grid(row=0, column=1, sticky="nsew", padx=(10, 0))
 
         sys_card = self.create_card(right_col, "État Système")
         sys_card.pack(fill="both", expand=True)
 
-        # Utilisation CPU
         cpu_frame = ctk.CTkFrame(sys_card, fg_color="transparent")
         cpu_frame.pack(fill="x", padx=15, pady=10)
         ctk.CTkLabel(cpu_frame, text="CPU", font=("Helvetica Neue", 12)).pack(side="left")
@@ -505,7 +462,6 @@ class JustDownApp(ctk.CTk):
         self.cpu_progress.pack(fill="x", padx=15, pady=(0, 15))
         self.cpu_progress.set(0)
 
-        # Utilisation RAM
         ram_frame = ctk.CTkFrame(sys_card, fg_color="transparent")
         ram_frame.pack(fill="x", padx=15, pady=10)
         ctk.CTkLabel(ram_frame, text="RAM", font=("Helvetica Neue", 12)).pack(side="left")
@@ -515,7 +471,6 @@ class JustDownApp(ctk.CTk):
         self.ram_progress.pack(fill="x", padx=15, pady=(0, 15))
         self.ram_progress.set(0)
 
-        # Démarrer la mise à jour des stats
         self.update_dashboard_stats()
 
     def update_dashboard_stats(self):
@@ -539,7 +494,6 @@ class JustDownApp(ctk.CTk):
         self.clear_main_frame()
         self.current_tab_id = "VPN"
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=30, pady=(30, 20))
         
@@ -557,13 +511,11 @@ class JustDownApp(ctk.CTk):
                                   text_color=status_color)
         status_label.pack(side="right")
         
-        # Grille pour les cartes VPN
         vpn_grid = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         vpn_grid.pack(fill="both", expand=True, padx=30)
         vpn_grid.grid_columnconfigure(0, weight=1)
         vpn_grid.grid_columnconfigure(1, weight=1)
 
-        # Carte de sélection (Colonne 0)
         location_card = self.create_card(vpn_grid, "Serveur", "Choisissez votre emplacement virtuel.")
         location_card.grid(row=0, column=0, sticky="nsew", padx=(0, 10), pady=10)
         
@@ -578,7 +530,6 @@ class JustDownApp(ctk.CTk):
                                         button_color=self.primary_color)
         location_menu.pack(pady=(0, 20), padx=20)
         
-        # Carte des contrôles et stats (Colonne 1)
         right_col = ctk.CTkFrame(vpn_grid, fg_color="transparent")
         right_col.grid(row=0, column=1, sticky="nsew", padx=(10, 0), pady=10)
 
@@ -598,7 +549,6 @@ class JustDownApp(ctk.CTk):
                                      hover_color=self.accent_color)
         self.vpn_main_btn.pack(pady=20)
         
-        # Carte des statistiques
         stats_card = self.create_card(right_col, "Informations")
         stats_card.pack(fill="both", expand=True)
         
@@ -622,7 +572,6 @@ class JustDownApp(ctk.CTk):
         def finish_connection():
             self.is_vpn_connected = True
             self.status_bar.stop()
-            # Simuler un changement d'IP
             self.public_ip = "185.213.154." + str(psutil.cpu_count() * 10) 
             self.create_vpn_tab()
             messagebox.showinfo("VPN", f"Connecté à {self.selected_location.get()}")
@@ -637,7 +586,7 @@ class JustDownApp(ctk.CTk):
         def finish_disconnection():
             self.is_vpn_connected = False
             self.status_bar.stop()
-            self.fetch_ip_thread() # Récupérer la vraie IP
+            self.fetch_ip_thread() 
             self.create_vpn_tab()
             messagebox.showinfo("VPN", "Déconnecté")
             
@@ -646,7 +595,6 @@ class JustDownApp(ctk.CTk):
     def create_clean_tab(self):
         self.clear_main_frame()
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=30, pady=(30, 20))
         
@@ -655,16 +603,13 @@ class JustDownApp(ctk.CTk):
                     font=("Helvetica Neue", 28, "bold"),
                     text_color=self.primary_color).pack(side="left")
 
-        # Conteneur principal avec scroll si besoin
         scroll_container = ctk.CTkScrollableFrame(self.main_frame, fg_color="transparent")
         scroll_container.pack(fill="both", expand=True, padx=30)
 
-        # Grille pour les options
         grid_frame = ctk.CTkFrame(scroll_container, fg_color="transparent")
         grid_frame.pack(fill="x")
         grid_frame.grid_columnconfigure((0, 1), weight=1)
 
-        # Carte Windows (Colonne 0)
         windows_card = self.create_card(grid_frame, "Système Windows")
         windows_card.grid(row=0, column=0, sticky="nsew", padx=(0, 10), pady=10)
 
@@ -684,7 +629,6 @@ class JustDownApp(ctk.CTk):
             ctk.CTkSwitch(item, text=option, variable=self.windows_vars[option], progress_color=self.primary_color).pack(side="left")
             ctk.CTkLabel(item, text=description, font=("Helvetica Neue", 11), text_color=self.text_color_secondary).pack(side="right")
 
-        # Carte Navigateurs (Colonne 1)
         browser_card = self.create_card(grid_frame, "Navigateurs Web")
         browser_card.grid(row=0, column=1, sticky="nsew", padx=(10, 0), pady=10)
 
@@ -704,7 +648,6 @@ class JustDownApp(ctk.CTk):
             ctk.CTkSwitch(item, text=option, variable=self.browser_vars[option], progress_color=self.accent_color).pack(side="left")
             ctk.CTkLabel(item, text=description, font=("Helvetica Neue", 11), text_color=self.text_color_secondary).pack(side="right")
 
-        # Zone d'action
         action_frame = ctk.CTkFrame(scroll_container, fg_color=self.secondary_color, corner_radius=15)
         action_frame.pack(fill="x", pady=20)
         
@@ -717,7 +660,6 @@ class JustDownApp(ctk.CTk):
     def analyze_system(self):
         self.status_bar.start()
         
-        # Simuler une analyse
         import random
         total_space = random.uniform(1.5, 5.0)
         
@@ -734,7 +676,6 @@ class JustDownApp(ctk.CTk):
         self.status_bar.start()
         
         try:
-            # Nettoyage Windows
             if self.windows_vars.get("Fichiers temporaires") and self.windows_vars["Fichiers temporaires"].get():
                 self.clean_temp_files()
             
@@ -744,7 +685,6 @@ class JustDownApp(ctk.CTk):
             if self.windows_vars.get("Corbeille") and self.windows_vars["Corbeille"].get():
                 self.clean_recycle_bin()
             
-            # Nettoyage Navigateurs
             if self.browser_vars.get("Cache Web") and self.browser_vars["Cache Web"].get():
                 self.clean_browser_cache()
             
@@ -788,21 +728,17 @@ class JustDownApp(ctk.CTk):
             pass
 
     def clean_browser_cache(self):
-        # Implémentation du nettoyage du cache des navigateurs
         pass
 
     def clean_browser_cookies(self):
-        # Implémentation du nettoyage des cookies
         pass
 
     def clean_browser_history(self):
-        # Implémentation du nettoyage de l'historique
         pass
 
     def create_secure_delete_tab(self):
         self.clear_main_frame()
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=20, pady=20)
         
@@ -811,14 +747,12 @@ class JustDownApp(ctk.CTk):
                     font=("Helvetica Neue", 24, "bold"),
                     text_color=self.primary_color).pack(side="left")
 
-        # Carte de sélection des fichiers
         files_card = self.create_card(self.main_frame, "Sélection des Fichiers")
         files_card.pack(fill="x", padx=20, pady=10)
 
         files_frame = ctk.CTkFrame(files_card, fg_color="transparent")
         files_frame.pack(fill="x", padx=15, pady=10)
 
-        # Liste des fichiers sélectionnés
         self.selected_files_text = Text(files_frame, height=5, width=50)
         self.selected_files_text.pack(fill="x", pady=5)
         self.selected_files_text.configure(state='disabled')
@@ -846,14 +780,12 @@ class JustDownApp(ctk.CTk):
                                            hover_color=self.accent_color)
         clear_selection_btn.pack(side="left", padx=5)
 
-        # Carte des options de suppression
         options_card = self.create_card(self.main_frame, "Options de Suppression")
         options_card.pack(fill="x", padx=20, pady=10)
 
         options_frame = ctk.CTkFrame(options_card, fg_color="transparent")
         options_frame.pack(fill="x", padx=15, pady=10)
 
-        # Sélection du nombre de passes
         passes_frame = ctk.CTkFrame(options_frame, fg_color="transparent")
         passes_frame.pack(fill="x", pady=5)
 
@@ -870,7 +802,6 @@ class JustDownApp(ctk.CTk):
                                       font=("Helvetica Neue", 12))
         passes_menu.pack(side="right")
 
-        # Options supplémentaires
         self.zero_fill_var = ctk.BooleanVar(value=True)
         zero_fill_check = ctk.CTkCheckBox(options_frame,
                                         text="Remplir avec des zéros après la suppression",
@@ -885,7 +816,6 @@ class JustDownApp(ctk.CTk):
                                      font=("Helvetica Neue", 13))
         rename_check.pack(anchor="w", pady=5)
 
-        # Bouton de suppression
         delete_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         delete_frame.pack(fill="x", padx=20, pady=20)
 
@@ -899,7 +829,6 @@ class JustDownApp(ctk.CTk):
                                        hover_color="#C0392B")
         self.delete_btn.pack(side="left")
 
-        # Initialiser la liste des fichiers sélectionnés
         self.selected_files = []
 
     def select_files_to_delete(self):
@@ -943,10 +872,8 @@ class JustDownApp(ctk.CTk):
         try:
             for file_path in self.selected_files:
                 if os.path.exists(file_path):
-                    # Obtenir la taille du fichier
                     file_size = os.path.getsize(file_path)
                     
-                    # Renommer le fichier si l'option est activée
                     if self.rename_var.get():
                         directory = os.path.dirname(file_path)
                         random_name = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
@@ -954,24 +881,20 @@ class JustDownApp(ctk.CTk):
                         os.rename(file_path, new_path)
                         file_path = new_path
 
-                    # Écraser le fichier plusieurs fois
                     with open(file_path, 'wb') as f:
                         for pass_num in range(passes):
-                            # Retourner au début du fichier
                             f.seek(0)
                             
-                            # Différents motifs d'écrasement pour chaque passe
                             if pass_num % 3 == 0:
-                                f.write(b'\x00' * file_size)  # Zéros
+                                f.write(b'\x00' * file_size) 
                             elif pass_num % 3 == 1:
-                                f.write(b'\xFF' * file_size)  # Uns
+                                f.write(b'\xFF' * file_size) 
                             else:
-                                f.write(os.urandom(file_size))  # Données aléatoires
+                                f.write(os.urandom(file_size)) 
                             
                             f.flush()
                             os.fsync(f.fileno())
 
-                    # Supprimer le fichier
                     os.remove(file_path)
 
             self.status_bar.stop()
@@ -985,7 +908,6 @@ class JustDownApp(ctk.CTk):
     def create_encryption_tab(self):
         self.clear_main_frame()
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=30, pady=(30, 20))
         
@@ -994,11 +916,9 @@ class JustDownApp(ctk.CTk):
                     font=("Helvetica Neue", 28, "bold"),
                     text_color=self.primary_color).pack(side="left")
 
-        # Conteneur principal
         main_container = ctk.CTkScrollableFrame(self.main_frame, fg_color="transparent")
         main_container.pack(fill="both", expand=True, padx=30)
 
-        # Section Chiffrement de Fichiers
         file_card = self.create_card(main_container, "Chiffrement de Fichiers", "Protégez vos documents avec un chiffrement AES-256 de niveau militaire.")
         file_card.pack(fill="x", pady=(0, 20))
 
@@ -1020,7 +940,6 @@ class JustDownApp(ctk.CTk):
         decrypt_file_btn = AnimatedButton(file_btn_container, text="Déchiffrer le fichier", command=self.decrypt_file, width=180, height=38, fg_color=self.secondary_color, hover_color=self.accent_color)
         decrypt_file_btn.pack(side="left")
 
-        # Section Chiffrement de Texte
         text_card = self.create_card(main_container, "Chiffrement de Texte", "Chiffrez vos messages ou notes sensibles instantanément.")
         text_card.pack(fill="x", pady=(0, 20))
 
@@ -1036,7 +955,6 @@ class JustDownApp(ctk.CTk):
         decrypt_text_btn = AnimatedButton(text_btn_container, text="Déchiffrer le texte", command=self.decrypt_text, width=180, height=38, fg_color=self.secondary_color, hover_color=self.accent_color)
         decrypt_text_btn.pack(side="left")
 
-        # Section Paramètres de Chiffrement
         settings_card = self.create_card(main_container, "Paramètres Avancés")
         settings_card.pack(fill="x", pady=(0, 20))
 
@@ -1044,14 +962,12 @@ class JustDownApp(ctk.CTk):
         settings_grid.pack(fill="x", padx=15, pady=10)
         settings_grid.grid_columnconfigure((0, 1), weight=1)
 
-        # Algorithme
         algo_item = ctk.CTkFrame(settings_grid, fg_color="transparent")
         algo_item.grid(row=0, column=0, sticky="ew", padx=(0, 10))
         ctk.CTkLabel(algo_item, text="Algorithme", font=("Helvetica Neue", 12)).pack(side="left")
         self.algo_var = ctk.StringVar(value="AES-256")
         ctk.CTkOptionMenu(algo_item, values=["AES-256", "RSA", "Blowfish"], variable=self.algo_var, width=140, fg_color=self.card_color, button_color=self.primary_color).pack(side="right")
 
-        # Force de la clé
         key_item = ctk.CTkFrame(settings_grid, fg_color="transparent")
         key_item.grid(row=0, column=1, sticky="ew", padx=(10, 0))
         ctk.CTkLabel(key_item, text="Force de la clé", font=("Helvetica Neue", 12)).pack(side="left")
@@ -1062,7 +978,6 @@ class JustDownApp(ctk.CTk):
                                     font=ctk.CTkFont(size=14, weight="bold"))
         advanced_label.pack(side="left", padx=15, pady=10)
 
-        # Switch pour le padding personnalisé
         self.padding_var = ctk.BooleanVar(value=False)
         padding_switch = ctk.CTkSwitch(advanced_frame, 
                                      text="Padding personnalisé",
@@ -1074,7 +989,6 @@ class JustDownApp(ctk.CTk):
         padding_switch.pack(side="right", padx=15, pady=10)
 
     def toggle_padding(self):
-        # Fonction à implémenter pour gérer le padding personnalisé
         if self.padding_var.get():
             messagebox.showinfo("Padding", "Padding personnalisé activé")
         else:
@@ -1090,14 +1004,12 @@ class JustDownApp(ctk.CTk):
 
     def encrypt_file(self):
         if hasattr(self, 'current_file'):
-            # Logique de chiffrement de fichier à implémenter
             messagebox.showinfo("Chiffrement", "Chiffrement du fichier en cours...")
         else:
             messagebox.showerror("Erreur", "Veuillez d'abord sélectionner un fichier")
 
     def decrypt_file(self):
         if hasattr(self, 'current_file'):
-            # Logique de déchiffrement de fichier à implémenter
             messagebox.showinfo("Déchiffrement", "Déchiffrement du fichier en cours...")
         else:
             messagebox.showerror("Erreur", "Veuillez d'abord sélectionner un fichier")
@@ -1105,7 +1017,6 @@ class JustDownApp(ctk.CTk):
     def encrypt_text(self):
         text = self.text_input.get("1.0", END).strip()
         if text:
-            # Logique de chiffrement de texte à implémenter
             messagebox.showinfo("Chiffrement", "Texte chiffré avec succès")
         else:
             messagebox.showerror("Erreur", "Veuillez entrer du texte à chiffrer")
@@ -1113,7 +1024,6 @@ class JustDownApp(ctk.CTk):
     def decrypt_text(self):
         text = self.text_input.get("1.0", END).strip()
         if text:
-            # Logique de déchiffrement de texte à implémenter
             messagebox.showinfo("Déchiffrement", "Texte déchiffré avec succès")
         else:
             messagebox.showerror("Erreur", "Veuillez entrer du texte à déchiffrer")
@@ -1125,7 +1035,6 @@ class JustDownApp(ctk.CTk):
     def create_privacy_tab(self):
         self.clear_main_frame()
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=30, pady=(30, 20))
         
@@ -1134,11 +1043,9 @@ class JustDownApp(ctk.CTk):
                     font=("Helvetica Neue", 28, "bold"),
                     text_color=self.primary_color).pack(side="left")
 
-        # Conteneur principal
         main_container = ctk.CTkScrollableFrame(self.main_frame, fg_color="transparent")
         main_container.pack(fill="both", expand=True, padx=30)
 
-        # Carte des paramètres de navigation
         browsing_card = self.create_card(main_container, "Navigation Privée", "Optimisez votre navigateur pour une confidentialité maximale.")
         browsing_card.pack(fill="x", pady=(0, 20))
 
@@ -1159,7 +1066,6 @@ class JustDownApp(ctk.CTk):
             ctk.CTkSwitch(item, text=option, font=("Helvetica Neue", 13), progress_color=self.primary_color).pack(side="left")
             ctk.CTkLabel(item, text=description, font=("Helvetica Neue", 11), text_color=self.text_color_secondary).pack(side="right")
 
-        # Zone d'action
         btn_frame = ctk.CTkFrame(main_container, fg_color="transparent")
         btn_frame.pack(fill="x", pady=10)
 
@@ -1182,7 +1088,6 @@ class JustDownApp(ctk.CTk):
     def create_system_info_tab(self):
         self.clear_main_frame()
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=30, pady=(30, 20))
         
@@ -1191,7 +1096,6 @@ class JustDownApp(ctk.CTk):
                     font=("Helvetica Neue", 28, "bold"),
                     text_color=self.primary_color).pack(side="left")
 
-        # Conteneur principal
         main_container = ctk.CTkScrollableFrame(self.main_frame, fg_color="transparent")
         main_container.pack(fill="both", expand=True, padx=30)
 
@@ -1199,12 +1103,10 @@ class JustDownApp(ctk.CTk):
         import psutil
         import os
 
-        # Grille pour les infos
         grid = ctk.CTkFrame(main_container, fg_color="transparent")
         grid.pack(fill="x")
         grid.grid_columnconfigure((0, 1), weight=1)
 
-        # Carte OS (Colonne 0)
         os_card = self.create_card(grid, "Système & Matériel")
         os_card.grid(row=0, column=0, sticky="nsew", padx=(0, 10), pady=10)
 
@@ -1221,7 +1123,6 @@ class JustDownApp(ctk.CTk):
             ctk.CTkLabel(item, text=label, font=("Helvetica Neue", 12), text_color=self.text_color_secondary).pack(side="left")
             ctk.CTkLabel(item, text=value, font=("Helvetica Neue", 12, "bold")).pack(side="right")
 
-        # Carte Mémoire (Colonne 1)
         mem_card = self.create_card(grid, "Mémoire & Ressources")
         mem_card.grid(row=0, column=1, sticky="nsew", padx=(10, 0), pady=10)
 
@@ -1239,7 +1140,6 @@ class JustDownApp(ctk.CTk):
             ctk.CTkLabel(item, text=label, font=("Helvetica Neue", 12), text_color=self.text_color_secondary).pack(side="left")
             ctk.CTkLabel(item, text=value, font=("Helvetica Neue", 12, "bold")).pack(side="right")
 
-        # Carte Disques
         disk_card = self.create_card(main_container, "Unités de Stockage")
         disk_card.pack(fill="x", pady=10)
 
@@ -1271,20 +1171,16 @@ class JustDownApp(ctk.CTk):
     def create_settings_tab(self):
         self.clear_main_frame()
         
-        # Frame principal pour les paramètres
         settings_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         settings_frame.pack(fill="both", expand=True, padx=30, pady=30)
 
-        # Titre
         ctk.CTkLabel(settings_frame, text="Paramètres de l'Application", 
                                  font=("Helvetica Neue", 24, "bold"),
                                  text_color=self.text_color).pack(anchor="w", pady=(0, 20))
 
-        # --- Section Apparence ---
         appearance_card = self.create_card(settings_frame, "Apparence")
         appearance_card.pack(fill="x", pady=10)
 
-        # Mode Sombre/Clair
         mode_frame = ctk.CTkFrame(appearance_card, fg_color="transparent")
         mode_frame.pack(fill="x", padx=15, pady=10)
         
@@ -1299,7 +1195,6 @@ class JustDownApp(ctk.CTk):
                                     button_color=self.primary_color)
         mode_menu.pack(side="right")
 
-        # Thème de couleur
         theme_frame = ctk.CTkFrame(appearance_card, fg_color="transparent")
         theme_frame.pack(fill="x", padx=15, pady=10)
         
@@ -1314,11 +1209,9 @@ class JustDownApp(ctk.CTk):
                                     button_color=self.primary_color)
         theme_menu.pack(side="right")
 
-        # --- Section Préférences ---
         pref_card = self.create_card(settings_frame, "Préférences")
         pref_card.pack(fill="x", pady=10)
 
-        # Langue
         lang_frame = ctk.CTkFrame(pref_card, fg_color="transparent")
         lang_frame.pack(fill="x", padx=15, pady=10)
         
@@ -1332,7 +1225,6 @@ class JustDownApp(ctk.CTk):
                                    button_color=self.primary_color)
         lang_menu.pack(side="right")
 
-        # Notifications
         notif_frame = ctk.CTkFrame(pref_card, fg_color="transparent")
         notif_frame.pack(fill="x", padx=15, pady=10)
         
@@ -1354,7 +1246,6 @@ class JustDownApp(ctk.CTk):
     def create_dns_tab(self):
         self.clear_main_frame()
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=30, pady=(30, 20))
         
@@ -1363,7 +1254,6 @@ class JustDownApp(ctk.CTk):
                     font=("Helvetica Neue", 28, "bold"),
                     text_color=self.primary_color).pack(side="left")
 
-        # Conteneur principal
         main_container = ctk.CTkScrollableFrame(self.main_frame, fg_color="transparent")
         main_container.pack(fill="both", expand=True, padx=30)
 
@@ -1397,7 +1287,6 @@ class JustDownApp(ctk.CTk):
         restore_btn.pack(side="left")
 
     def apply_dns_settings(self):
-        # Simuler l'application des paramètres DNS
         self.status_bar.start()
         threading.Timer(2.0, self.finish_dns_settings).start()
 
@@ -1406,7 +1295,6 @@ class JustDownApp(ctk.CTk):
         messagebox.showinfo("Succès", "Les paramètres DNS ont été appliqués avec succès !")
 
     def restore_default_dns(self):
-        # Simuler la restauration des paramètres DNS
         self.status_bar.start()
         threading.Timer(2.0, self.finish_dns_restore).start()
 
@@ -1417,7 +1305,6 @@ class JustDownApp(ctk.CTk):
     def create_anti_spy_tab(self):
         self.clear_main_frame()
         
-        # Titre principal
         header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=30, pady=(30, 20))
         
@@ -1426,16 +1313,13 @@ class JustDownApp(ctk.CTk):
                     font=("Helvetica Neue", 28, "bold"),
                     text_color=self.primary_color).pack(side="left")
 
-        # Conteneur principal
         main_container = ctk.CTkScrollableFrame(self.main_frame, fg_color="transparent")
         main_container.pack(fill="both", expand=True, padx=30)
 
-        # Grille pour les options
         grid = ctk.CTkFrame(main_container, fg_color="transparent")
         grid.pack(fill="x")
         grid.grid_columnconfigure((0, 1), weight=1)
 
-        # Carte Télémétrie
         tele_card = self.create_card(grid, "Services de Télémétrie", "Désactivez la collecte de données automatique de Microsoft.")
         tele_card.grid(row=0, column=0, sticky="nsew", padx=(0, 10), pady=10)
 
@@ -1454,7 +1338,6 @@ class JustDownApp(ctk.CTk):
             ctk.CTkSwitch(item, text=opt, variable=self.telemetry_vars[opt], progress_color=self.primary_color).pack(side="left")
             ctk.CTkLabel(item, text=desc, font=("Helvetica Neue", 11), text_color=self.text_color_secondary).pack(side="right")
 
-        # Carte Fonctionnalités
         feat_card = self.create_card(grid, "Fonctionnalités", "Désactivez les fonctions intrusives de Windows.")
         feat_card.grid(row=0, column=1, sticky="nsew", padx=(10, 0), pady=10)
 
@@ -1473,7 +1356,6 @@ class JustDownApp(ctk.CTk):
             ctk.CTkSwitch(item, text=opt, variable=self.features_vars[opt], progress_color=self.accent_color).pack(side="left")
             ctk.CTkLabel(item, text=desc, font=("Helvetica Neue", 11), text_color=self.text_color_secondary).pack(side="right")
 
-        # Zone d'action
         btn_frame = ctk.CTkFrame(main_container, fg_color="transparent")
         btn_frame.pack(fill="x", pady=20)
 
@@ -1494,7 +1376,6 @@ class JustDownApp(ctk.CTk):
         try:
             import subprocess
             
-            # Désactiver les services de télémétrie
             if self.telemetry_vars["Service de Télémétrie Windows"].get():
                 subprocess.run(['sc', 'stop', 'DiagTrack'], capture_output=True)
                 subprocess.run(['sc', 'config', 'DiagTrack', 'start=disabled'], capture_output=True)
@@ -1503,7 +1384,6 @@ class JustDownApp(ctk.CTk):
                 subprocess.run(['sc', 'stop', 'dmwappushservice'], capture_output=True)
                 subprocess.run(['sc', 'config', 'dmwappushservice', 'start=disabled'], capture_output=True)
 
-            # Désactiver Cortana
             if self.features_vars["Cortana"].get():
                 import winreg
                 key_path = r"SOFTWARE\Policies\Microsoft\Windows\Windows Search"
@@ -1513,7 +1393,6 @@ class JustDownApp(ctk.CTk):
                 except:
                     pass
 
-            # Désactiver la localisation
             if self.features_vars["Localisation"].get():
                 subprocess.run(['sc', 'stop', 'lfsvc'], capture_output=True)
                 subprocess.run(['sc', 'config', 'lfsvc', 'start=disabled'], capture_output=True)
@@ -1535,12 +1414,10 @@ class JustDownApp(ctk.CTk):
         try:
             import subprocess
             
-            # Réactiver les services
             subprocess.run(['sc', 'config', 'DiagTrack', 'start=auto'], capture_output=True)
             subprocess.run(['sc', 'config', 'dmwappushservice', 'start=auto'], capture_output=True)
             subprocess.run(['sc', 'config', 'lfsvc', 'start=auto'], capture_output=True)
             
-            # Démarrer les services
             subprocess.run(['sc', 'start', 'DiagTrack'], capture_output=True)
             subprocess.run(['sc', 'start', 'dmwappushservice'], capture_output=True)
             subprocess.run(['sc', 'start', 'lfsvc'], capture_output=True)
@@ -1560,7 +1437,6 @@ class JustDownApp(ctk.CTk):
             import base64
             import os
             
-            # Générer une clé à partir du mot de passe
             salt = os.urandom(16)
             kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),
@@ -1570,24 +1446,18 @@ class JustDownApp(ctk.CTk):
             )
             key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
             
-            # Créer l'objet Fernet pour le chiffrement
             f = Fernet(key)
             
-            # Lire le contenu du fichier
             with open(file_path, 'rb') as file:
                 file_data = file.read()
             
-            # Chiffrer le contenu
             encrypted_data = f.encrypt(file_data)
             
-            # Sauvegarder le fichier chiffré
             encrypted_file = file_path + '.encrypted'
             with open(encrypted_file, 'wb') as file:
-                # Sauvegarder le salt au début du fichier
                 file.write(salt)
                 file.write(encrypted_data)
             
-            # Supprimer le fichier original de manière sécurisée
             if self.secure_delete_after_encrypt:
                 self.secure_delete_file(file_path)
             else:
@@ -1605,13 +1475,10 @@ class JustDownApp(ctk.CTk):
             from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
             import base64
             
-            # Lire le fichier chiffré
             with open(encrypted_file, 'rb') as file:
-                # Lire le salt du début du fichier
                 salt = file.read(16)
                 encrypted_data = file.read()
             
-            # Recréer la clé avec le même salt
             kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),
                 length=32,
@@ -1620,18 +1487,14 @@ class JustDownApp(ctk.CTk):
             )
             key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
             
-            # Créer l'objet Fernet pour le déchiffrement
             f = Fernet(key)
             
-            # Déchiffrer les données
             decrypted_data = f.decrypt(encrypted_data)
             
-            # Sauvegarder le fichier déchiffré
             decrypted_file = encrypted_file.replace('.encrypted', '')
             with open(decrypted_file, 'wb') as file:
                 file.write(decrypted_data)
             
-            # Supprimer le fichier chiffré
             os.remove(encrypted_file)
             
             return True, decrypted_file
@@ -1647,7 +1510,6 @@ class JustDownApp(ctk.CTk):
             import base64
             import os
             
-            # Générer une clé à partir du mot de passe
             salt = os.urandom(16)
             kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),
@@ -1657,13 +1519,10 @@ class JustDownApp(ctk.CTk):
             )
             key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
             
-            # Créer l'objet Fernet pour le chiffrement
             f = Fernet(key)
             
-            # Chiffrer le texte
             encrypted_data = f.encrypt(text.encode())
             
-            # Combiner le salt et les données chiffrées
             return True, base64.urlsafe_b64encode(salt + encrypted_data).decode()
             
         except Exception as e:
@@ -1676,14 +1535,11 @@ class JustDownApp(ctk.CTk):
             from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
             import base64
             
-            # Décoder le texte chiffré
             encrypted_data = base64.urlsafe_b64decode(encrypted_text.encode())
             
-            # Extraire le salt
             salt = encrypted_data[:16]
             encrypted_data = encrypted_data[16:]
             
-            # Recréer la clé avec le même salt
             kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),
                 length=32,
@@ -1692,10 +1548,8 @@ class JustDownApp(ctk.CTk):
             )
             key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
             
-            # Créer l'objet Fernet pour le déchiffrement
             f = Fernet(key)
             
-            # Déchiffrer le texte
             decrypted_data = f.decrypt(encrypted_data)
             
             return True, decrypted_data.decode()
@@ -1709,14 +1563,12 @@ class JustDownApp(ctk.CTk):
             from cryptography.hazmat.primitives.asymmetric import rsa
             from cryptography.hazmat.primitives import hashes
             
-            # Générer la paire de clés
             private_key = rsa.generate_private_key(
                 public_exponent=65537,
                 key_size=2048
             )
             public_key = private_key.public_key()
             
-            # Sérialiser les clés
             private_pem = private_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
                 format=serialization.PrivateFormat.PKCS8,
@@ -1737,7 +1589,6 @@ class JustDownApp(ctk.CTk):
         try:
             import hashlib
             
-            # Sélectionner l'algorithme de hachage
             if algorithm == "MD5":
                 hash_obj = hashlib.md5()
             elif algorithm == "SHA1":
@@ -1749,7 +1600,6 @@ class JustDownApp(ctk.CTk):
             else:
                 return False, "Algorithme non supporté"
             
-            # Lire et hacher le fichier par morceaux
             with open(file_path, 'rb') as file:
                 for chunk in iter(lambda: file.read(4096), b''):
                     hash_obj.update(chunk)
