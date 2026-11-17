@@ -1,0 +1,9 @@
+# JustDown — Privacy & Anonymization Suite
+# Dependances tierces (Python 3.9+ recommande, Windows uniquement)
+# Installation : pip install -r requirements.txt
+
+customtkinter>=5.2.0
+Pillow>=10.0.0
+pyperclip>=1.8.2
+psutil>=5.9.0
+cryptography>=42.0.0
